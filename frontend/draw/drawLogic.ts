@@ -1,6 +1,3 @@
-import { HTTP_BACKEND } from "@/config";
-import axios from "axios";
-
 import { v4 as uuidv4 } from "uuid";
 import { Shape } from "../utils/types";
 import { drawArrow, intersectsEraser } from "../utils/drawUtils";
@@ -163,7 +160,9 @@ export async function drawLogic(
 
       if (inputValue) {
         const settings = getCurrentSettings();
-        ctx.font = `${settings.textFontWeight || "normal"} ${settings.textFontSize || 16}px sans-serif`;
+        ctx.font = `${settings.textFontWeight || "normal"} ${
+          settings.textFontSize || 16
+        }px sans-serif`;
         const textWidth = ctx.measureText(inputValue).width;
 
         // Get the input box dimensions

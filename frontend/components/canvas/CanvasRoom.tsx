@@ -1,6 +1,4 @@
 "use client";
-//opens up websocket connection
-import { WS_URL } from "@/config";
 
 import React, { useEffect, useRef, useState } from "react";
 import Canvas from "./Canvas";
@@ -17,7 +15,7 @@ export default function CanvasRoom({ roomId }: { roomId: string }) {
       return;
     }
     const ws = new WebSocket(
-      `${WS_URL}?token=${token}
+      `${process.env.NEXT_PUBLIC_WEBSOCKET_URL}?token=${token}
   `
     );
     ws.onopen = () => {
