@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Pen } from "lucide-react";
+
 import {
   Card,
   CardContent,
@@ -14,6 +14,7 @@ import {
 import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import * as LucideIcons from "lucide-react";
 
 interface formInterface {
   username: string;
@@ -23,7 +24,7 @@ interface formInterface {
 
 export default function SignupPage() {
   const router = useRouter();
-
+  const { Pen } = LucideIcons as any;
   const [formData, updateFormData] = useState<formInterface>({
     username: "",
     email: "",

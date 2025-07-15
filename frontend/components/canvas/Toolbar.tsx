@@ -1,16 +1,7 @@
 import type React from "react";
 import { useEffect, useState } from "react";
-import {
-  Hand,
-  MousePointer2,
-  Square,
-  Circle,
-  ArrowRight,
-  Pen,
-  Type,
-  ImageIcon,
-  Eraser,
-} from "lucide-react";
+import * as LucideIcons from "lucide-react";
+
 import { cn } from "../../lib/utils";
 
 interface ToolbarItem {
@@ -24,24 +15,35 @@ interface ToolbarProps {
   currShape: string;
 }
 
-const toolbarItems: ToolbarItem[] = [
-  { id: "hand", icon: Hand, shortcut: "1", label: "Hand Tool" },
-  {
-    id: "pointer",
-    icon: MousePointer2,
-    shortcut: "2",
-    label: "Selection Tool",
-  },
-  { id: "rect", icon: Square, shortcut: "3", label: "Rectangle" },
-  { id: "circle", icon: Circle, shortcut: "4", label: "Circle" },
-  { id: "arrow", icon: ArrowRight, shortcut: "5", label: "Arrow" },
-  { id: "pencil", icon: Pen, shortcut: "6", label: "Pen" },
-  { id: "text", icon: Type, shortcut: "7", label: "Text" },
-  { id: "image", icon: ImageIcon, shortcut: "8", label: "Image" },
-  { id: "eraser", icon: Eraser, shortcut: "9", label: "Eraser Tool" },
-];
-
 export default function Toolbar({ changeShape }: ToolbarProps) {
+  const {
+    Hand,
+    MousePointer2,
+    Square,
+    Circle,
+    ArrowRight,
+    Pen,
+    Type,
+    ImageIcon,
+    Eraser,
+  } = LucideIcons as any;
+  const toolbarItems: ToolbarItem[] = [
+    { id: "hand", icon: Hand, shortcut: "1", label: "Hand Tool" },
+    {
+      id: "pointer",
+      icon: MousePointer2,
+      shortcut: "2",
+      label: "Selection Tool",
+    },
+    { id: "rect", icon: Square, shortcut: "3", label: "Rectangle" },
+    { id: "circle", icon: Circle, shortcut: "4", label: "Circle" },
+    { id: "arrow", icon: ArrowRight, shortcut: "5", label: "Arrow" },
+    { id: "pencil", icon: Pen, shortcut: "6", label: "Pen" },
+    { id: "text", icon: Type, shortcut: "7", label: "Text" },
+    { id: "image", icon: ImageIcon, shortcut: "8", label: "Image" },
+    { id: "eraser", icon: Eraser, shortcut: "9", label: "Eraser Tool" },
+  ];
+
   const [selectedTool, setSelectedTool] = useState("pointer");
 
   const handleToolSelect = (toolId: string) => {

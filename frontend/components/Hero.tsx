@@ -1,4 +1,5 @@
-import { ArrowRight } from "lucide-react";
+import * as LucideIcons from "lucide-react";
+const { ArrowRight } = LucideIcons as any;
 
 const Hero = () => {
   return (

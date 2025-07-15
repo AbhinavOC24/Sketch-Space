@@ -13,7 +13,8 @@ import {
   DialogFooter,
   DialogClose,
 } from "./ui/dialog";
-import { ChevronRight, Loader2 } from "lucide-react";
+import * as LucideIcons from "lucide-react";
+
 import axios from "axios";
 import { useRouter } from "next/navigation";
 interface CreateRoomModalProps {
@@ -21,6 +22,7 @@ interface CreateRoomModalProps {
 }
 
 export function CreateRoomModal({ children }: CreateRoomModalProps) {
+  const { ChevronRight, Loader2 } = LucideIcons as any;
   const router = useRouter();
   const [slug, setSlug] = useState("");
   const [isOpen, setIsOpen] = useState(false);

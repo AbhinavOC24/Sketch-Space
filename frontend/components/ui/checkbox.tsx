@@ -2,7 +2,11 @@
 
 import * as React from "react";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
-import { Check } from "lucide-react";
+
+import * as LucideIcons from "lucide-react";
+
+const { Check } = LucideIcons as any;
+
 import { cn } from "@/lib/frontUtils";
 
 const Checkbox = React.forwardRef<

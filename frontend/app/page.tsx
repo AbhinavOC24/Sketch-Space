@@ -1,4 +1,3 @@
-// @ts-ignore
 "use client";
 
 import type React from "react";
@@ -6,15 +5,8 @@ import type React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Pen,
-  Users,
-  Share2,
-  ChevronRight,
-  Loader2,
-  X,
-  LinkIcon,
-} from "lucide-react";
+// @ts-ignore
+import * as LucideIcons from "lucide-react";
 
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -36,6 +28,9 @@ export function isTokenValid(token: string | null): boolean {
 }
 export default function LandingPage() {
   const router = useRouter();
+  const { Pen, Users, Share2, ChevronRight, Loader2, X, LinkIcon } =
+    LucideIcons as any;
+
   const [loginStatus, updateLoginStatus] = useState<boolean>(false);
   const [logoutLoading, setLogoutLoading] = useState<boolean>(false);
   const [isJoinModalOpen, setIsJoinModalOpen] = useState<boolean>(false);

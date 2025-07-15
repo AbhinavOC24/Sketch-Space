@@ -1,15 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import * as LucideIcons from "lucide-react";
+
 import { useDrawingSettings } from "@/stores/StyleOptionStore";
-import {
-  AlignLeft,
-  AlignCenter,
-  AlignRight,
-  Bold,
-  Italic,
-  Type,
-} from "lucide-react";
 
 const strokeColors = ["#ffffff", "#d1d5db", "#f87171", "#60a5fa"];
 
@@ -200,6 +193,8 @@ export function DrawingSettingsSidebar() {
 }
 
 export function TextDrawingSettingsSidebar() {
+  const { AlignLeft, AlignCenter, AlignRight, Bold, Italic, Type } =
+    LucideIcons as any;
   const {
     textStrokeColor,
     setTextStrokeColorByIndex,

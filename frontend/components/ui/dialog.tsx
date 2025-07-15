@@ -1,9 +1,11 @@
 "use client";
 
 import * as React from "react";
-import { X } from "lucide-react";
-import { cn } from "@/lib/utils";
 
+import { cn } from "@/lib/utils";
+import * as LucideIcons from "lucide-react";
+
+const { X } = LucideIcons as any;
 interface DialogProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
