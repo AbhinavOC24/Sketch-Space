@@ -1,4 +1,3 @@
-import { Button } from "@repo/ui/button";
 import { ArrowRight } from "lucide-react";
 
 const Hero = () => {
@@ -13,18 +12,6 @@ const Hero = () => {
             A beautiful whiteboard tool that lets you express your ideas with
             freedom. Just like Excalidraw, but with our special touch.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              size="lg"
-              variant="primary"
-              className="gap-2 border px-5 py-3 rounded-xl m-2"
-            >
-              Start Drawing
-            </Button>
-            <Button size="lg" variant="outline">
-              Learn More
-            </Button>
-          </div>
         </div>
         <div className="mt-16 rounded-xl border border-border bg-card p-2 shadow-2xl">
           <div className="aspect-video rounded-lg bg-secondary"></div>
