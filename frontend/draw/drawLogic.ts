@@ -425,13 +425,14 @@ export async function drawLogic(
 
         existingShape = existingShape.filter((shape) => {
           const intersect = intersectsEraser(shape, eraserPoints);
-          existingShapesRef.current = existingShape; // ← Update ref
 
           if (intersect) {
             deletedShape.push(shape);
           }
           return !intersect;
         });
+        existingShapesRef.current = existingShape;
+
         clearCanvas(existingShape, canvas, ctx, zoomRef, offsetRef);
       } else if (ShapeRef.current === "arrow") {
         clearCanvas(existingShape, canvas, ctx, zoomRef, offsetRef);

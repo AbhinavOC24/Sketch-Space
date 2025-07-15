@@ -1,6 +1,3 @@
-import { Button } from "@repo/ui/button";
-import { Github } from "lucide-react";
-
 const Header = () => {
   return (
     <header className="fixed top-0 left-0 right-0 bg-background/80 backdrop-blur-sm z-50 border-b border-border">
@@ -21,10 +18,6 @@ const Header = () => {
           >
             About
           </a>
-          <Button variant="outline" className="flex items-center gap-2">
-            <Github size={20} />
-            <span>GitHub</span>
-          </Button>
         </nav>
       </div>
     </header>

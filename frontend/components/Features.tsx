@@ -1,4 +1,5 @@
-import { Pencil, Share2, Sparkles, Users } from "lucide-react";
+// @ts-ignore
+import { Pencil, Share2, Users } from "lucide-react";
 
 const features = [
   {
@@ -15,12 +16,6 @@ const features = [
     icon: Share2,
     title: "Easy Sharing",
     description: "Share your creations with a simple link, no signup required.",
-  },
-  {
-    icon: Sparkles,
-    title: "Beautiful Results",
-    description:
-      "Create professional-looking diagrams and sketches effortlessly.",
   },
 ];
 
