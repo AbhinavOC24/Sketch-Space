@@ -3,7 +3,7 @@
 
 **Sketch Space** is a collaborative whiteboard app inspired by Excalidraw, designed for teams and individuals to sketch, brainstorm, and collaborate in real-time.
 
-![sketch-space-banner](https://raw.githubusercontent.com/AbhinavOC24/Sketch-Space/main/public/preview.png) <!-- Replace with actual image path -->
+
 
 ## ✨ Features
 
