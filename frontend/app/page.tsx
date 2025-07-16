@@ -107,7 +107,7 @@ export default function LandingPage() {
       <header className="container mx-auto py-6 px-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Pen className="size-6 text-purple-400" />
-          <span className="text-xl font-bold">Wiremap</span>
+          <span className="text-xl font-bold">SketchSpace</span>
         </div>
         {!loginStatus ? (
           <div className="flex items-center gap-4">
@@ -340,9 +340,9 @@ export default function LandingPage() {
       <footer className="container mx-auto py-8 px-4 border-t border-zinc-900 text-center text-gray-500 text-sm">
         <div className="flex justify-center items-center gap-2 mb-4">
           <Pen className="size-4 text-purple-400" />
-          <span className="font-medium text-gray-400">Wiremap</span>
+          <span className="font-medium text-gray-400">SketchSpace</span>
         </div>
-        <p>© {new Date().getFullYear()} Wiremap. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} SketchSpace. All rights reserved.</p>
       </footer>
 
       {/* Join Room Modal */}

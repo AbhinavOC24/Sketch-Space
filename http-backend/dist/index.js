@@ -81,6 +81,7 @@ app.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.cookie("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
+            sameSite: "none",
         });
         res.status(201).json({
             token,
@@ -132,6 +133,7 @@ app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.cookie("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
+            sameSite: "none",
         });
         res.status(200).json({
             token,
