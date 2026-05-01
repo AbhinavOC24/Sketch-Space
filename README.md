@@ -1,108 +1,110 @@
-# 🎨 Sketch Space
+# 🎨 SketchSpace
 
-**Sketch Space** is a collaborative whiteboard app inspired by Excalidraw, designed for teams and individuals to sketch, brainstorm, and collaborate in real-time.
+**SketchSpace** is a premium, real-time collaborative whiteboarding tool built for designers, developers, and creative teams. It features a high-performance drawing engine with glassmorphism aesthetics and instant synchronization across all participants.
 
-## ✨ Features
+![SketchSpace Preview](https://github.com/AbhinavOC24/Sketch-Space/raw/master/preview.png)
 
-- 🖊️ Freehand drawing, shapes, and text  
-- 🧠 Real-time collaboration via WebSockets  
-- 💾 Save and load sketches locally  
-- 🔗 Share boards with unique URLs  
-- 🌙 Light/Dark mode toggle  
-- ⚙️ Built with Next.js, TypeScript, and Tailwind CSS  
+## 🚀 Features
 
-## 🚀 Tech Stack
+- **Precision Drawing**: Smooth, anti-aliased strokes for pencil, shapes, and arrows.
+- **Live Collaboration**: See your teammates' cursors and updates in real-time with zero lag.
+- **Glassmorphism UI**: A sleek, dark-themed interface built with Tailwind CSS.
+- **Production Ready**: Fully Dockerized with an automated CI/CD pipeline.
 
-- **Frontend**: Next.js (React) + TypeScript  
-- **Styling**: Tailwind CSS  
-- **Realtime**: WebSockets (`ws` package)  
-- **Backend**: Node.js + Express + Prisma (PostgreSQL)  
-- **Others**: Zustand (state management), ESLint  
+## 🛠 Tech Stack
 
-## 📦 Setup & Installation
+- **Frontend**: [Next.js 15](https://nextjs.org/), [Tailwind CSS](https://tailwindcss.com/), [Lucide Icons](https://lucide.dev/)
+- **Backend (REST)**: [Node.js](https://nodejs.org/), [Express](https://expressjs.com/), [Prisma ORM](https://www.prisma.io/)
+- **Backend (Real-time)**: [WebSockets (ws)](https://github.com/websockets/ws)
+- **Database**: [PostgreSQL](https://www.postgresql.org/)
+- **Infrastructure**: [Docker](https://www.docker.com/), [Nginx](https://www.nginx.com/), [GitHub Actions](https://github.com/features/actions)
 
-### 1. Clone the repo
+---
 
+## 💻 Local Development
+
+### 1. Prerequisites
+- Node.js (v20+)
+- Docker (for the database)
+
+### 2. Clone the Repository
 ```bash
 git clone https://github.com/AbhinavOC24/Sketch-Space.git
 cd Sketch-Space
 ```
 
-Make sure you have npm and Docker installed.
+### 3. Setup the Database
+Start the PostgreSQL container:
+```bash
+docker compose up -d
+```
 
-### 2. Configure Environment Variables
+### 4. Configure Environment Variables
+Create `.env` files in each service directory:
 
-Create a `.env` file in the root of the following directories based on the required variables:
-
-**`http-backend/.env`**:
+#### `http-backend/.env`
 ```env
-DATABASE_URL="postgresql://postgres:password@127.0.0.1:5433/sketchspace"
-JWTSECRET="your_jwt_secret_here"
+DATABASE_URL="postgresql://postgres:password@localhost:5433/sketchspace"
+JWTSECRET="your_jwt_secret"
 FRONTEND_URL="http://localhost:3000"
 ```
 
-**`ws-backend/.env`**:
+#### `ws-backend/.env`
 ```env
-JWTSECRET="your_jwt_secret_here"
+DATABASE_URL="postgresql://postgres:password@localhost:5433/sketchspace"
+JWTSECRET="your_jwt_secret"
 ```
 
-**`frontend/.env.local`**:
+#### `frontend/.env`
 ```env
-NEXT_PUBLIC_BACKEND_URL="http://localhost:3001"
-NEXT_PUBLIC_WEBSOCKET_URL="ws://localhost:8081"
+NEXT_PUBLIC_BACKEND_URL="http://localhost:8001"
+NEXT_PUBLIC_WS_URL="ws://localhost:8002"
 ```
 
-### 3. Start the Database
-Run the local PostgreSQL database using Docker:
-```bash
-docker-compose up -d
-```
+### 5. Install & Run
+Run these in separate terminals:
 
-### 4. Start the development servers
-
-**Database Migrations** (in `http-backend`):
+**HTTP Backend:**
 ```bash
 cd http-backend
 npm install
-npx prisma migrate dev
-```
-
-**Start HTTP Backend**:
-```bash
-# From http-backend
+npx prisma generate
 npm run dev
 ```
 
-**Start WebSocket Backend**:
+**WebSocket Backend:**
 ```bash
 cd ws-backend
 npm install
+npx prisma generate
 npm run dev
 ```
 
-**Start Frontend**:
+**Frontend:**
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-Frontend runs on http://localhost:3000, HTTP backend runs on http://localhost:3001 and WebSocket runs on http://localhost:8081.
+---
 
-## 🛠️ Project Structure
-```bash
-Sketch-Space/
-├── frontend/       → Next.js Frontend app
-├── http-backend/   → Express REST API (Auth, Rooms, etc.)
-├── ws-backend/     → WebSocket Server for real-time collaboration
-└── README.md       → Project documentation
-```
+## 🚢 Production Deployment
 
-## 🤝 Contributing
-Feel free to fork and submit a PR! Contributions are welcome.
+### GitHub Secrets
+To use the built-in CI/CD pipeline, add the following secrets to your GitHub repository:
+
+- `EC2_HOST`: Your server IP.
+- `EC2_USER`: `ubuntu`
+- `EC2_SSH_KEY`: Your `.pem` private key content.
+- `DB_USER`: Database username.
+- `DB_PASSWORD`: Database password.
+- `JWT_SECRET`: Secure secret for authentication.
+
+### Nginx Configuration
+The project is designed to run on a standalone domain (e.g., `sketchspace.duckdns.org`). See the deployment logs for the specific Nginx `server` block configuration.
+
+---
 
 ## 📄 License
 This project is licensed under the MIT License.
-
-## 🙋‍♂️ Author
-@AbhinavOC24
