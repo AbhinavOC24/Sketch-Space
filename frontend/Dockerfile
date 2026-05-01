@@ -1,3 +1,4 @@
+# Stage 1: Build
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
@@ -9,10 +10,18 @@ ENV NEXT_PUBLIC_BACKEND_URL=$NEXT_PUBLIC_BACKEND_URL
 ENV NEXT_PUBLIC_WS_URL=$NEXT_PUBLIC_WS_URL
 RUN npm run build
 
+# Stage 2: Runner
 FROM node:20-alpine AS runner
 WORKDIR /app
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
+ENV NODE_ENV=production
+
+# Copy standalone build and static files
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
+COPY --from=builder /app/public ./public
+
 EXPOSE 3001
-CMD ["npm", "start", "--", "-p", "3001"]
+ENV PORT=3001
+
+# The standalone server uses server.js
+CMD ["node", "server.js"]
