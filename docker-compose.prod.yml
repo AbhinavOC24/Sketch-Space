@@ -25,6 +25,7 @@ services:
       JWTSECRET: ${JWT_SECRET}
       FRONTEND_URL: https://sketchspace.duckdns.org
       NODE_ENV: production
+    command: sh -c "npx prisma db push && npm start"
     ports:
       - "8001:8001"
 

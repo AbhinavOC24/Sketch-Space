@@ -1,17 +1,17 @@
-# 🎨 SketchSpace
+# SketchSpace
 
 **SketchSpace** is a premium, real-time collaborative whiteboarding tool built for designers, developers, and creative teams. It features a high-performance drawing engine with glassmorphism aesthetics and instant synchronization across all participants.
 
 ![SketchSpace Preview](https://github.com/AbhinavOC24/Sketch-Space/raw/master/preview.png)
 
-## 🚀 Features
+## Features
 
 - **Precision Drawing**: Smooth, anti-aliased strokes for pencil, shapes, and arrows.
 - **Live Collaboration**: See your teammates' cursors and updates in real-time with zero lag.
 - **Glassmorphism UI**: A sleek, dark-themed interface built with Tailwind CSS.
 - **Production Ready**: Fully Dockerized with an automated CI/CD pipeline.
 
-## 🛠 Tech Stack
+## Tech Stack
 
 - **Frontend**: [Next.js 15](https://nextjs.org/), [Tailwind CSS](https://tailwindcss.com/), [Lucide Icons](https://lucide.dev/)
 - **Backend (REST)**: [Node.js](https://nodejs.org/), [Express](https://expressjs.com/), [Prisma ORM](https://www.prisma.io/)
@@ -21,7 +21,7 @@
 
 ---
 
-## 💻 Local Development
+## Local Development
 
 ### 1. Prerequisites
 - Node.js (v20+)
@@ -89,7 +89,7 @@ npm run dev
 
 ---
 
-## 🚢 Production Deployment
+## Production Deployment
 
 ### GitHub Secrets
 To use the built-in CI/CD pipeline, add the following secrets to your GitHub repository:
@@ -106,5 +106,5 @@ The project is designed to run on a standalone domain (e.g., `sketchspace.duckdn
 
 ---
 
-## 📄 License
+## License
 This project is licensed under the MIT License.
