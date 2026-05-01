@@ -87,7 +87,6 @@ jobs:
 
       - name: Downcase REPO
         run: |
-          echo "REPO_OWNER=${GITHUB_REPOSITORY_OWNER,,}" >>${GITHUB_ENV}
           echo "REPO_PATH=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
 
       - name: Build and push HTTP Backend
@@ -141,12 +140,15 @@ jobs:
             cd ~/sketch-space
             echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             
-            # Export secrets for docker-compose
-            export REPO_OWNER=${{ github.repository_owner }}
-            export DB_USER=${{ secrets.DB_USER }}
-            export DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-            export JWT_SECRET=${{ secrets.JWT_SECRET }}
-            export FRONTEND_URL=https://sketchspace.duckdns.org
+            # Use lowercase repo path for docker pulls
+            export REPO_PATH=${GITHUB_REPOSITORY,,}
+            export REPO_OWNER=${GITHUB_REPOSITORY_OWNER,,}
+            
+            # Export secrets with quotes to handle special characters
+            export DB_USER="${{ secrets.DB_USER }}"
+            export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
+            export JWT_SECRET="${{ secrets.JWT_SECRET }}"
+            export FRONTEND_URL="https://sketchspace.duckdns.org"
             
             docker compose -f docker-compose.prod.yml pull
             docker compose -f docker-compose.prod.yml up -d
