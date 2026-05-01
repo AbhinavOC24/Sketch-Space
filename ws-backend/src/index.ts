@@ -3,7 +3,8 @@ dotenv.config();
 import { WebSocketServer, WebSocket } from "ws";
 import jwt from "jsonwebtoken";
 import prismaClient from "./db/index";
-const wss = new WebSocketServer({ port: 8080 });
+const port = Number(process.env.PORT) || 8002;
+const wss = new WebSocketServer({ port });
 
 interface User {
   ws: WebSocket;
