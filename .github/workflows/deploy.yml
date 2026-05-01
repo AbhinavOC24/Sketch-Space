@@ -136,15 +136,16 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          envs: GITHUB_REPOSITORY,GITHUB_REPOSITORY_OWNER
           script: |
             cd ~/sketch-space
             echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             
-            # Use lowercase repo path for docker pulls
-            export REPO_PATH=${GITHUB_REPOSITORY,,}
-            export REPO_OWNER=${GITHUB_REPOSITORY_OWNER,,}
+            # Convert to lowercase safely using POSIX sh
+            export REPO_PATH=$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')
+            export REPO_OWNER=$(echo "$GITHUB_REPOSITORY_OWNER" | tr '[:upper:]' '[:lower:]')
             
-            # Export secrets with quotes to handle special characters
+            # Export secrets with quotes
             export DB_USER="${{ secrets.DB_USER }}"
             export DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
             export JWT_SECRET="${{ secrets.JWT_SECRET }}"
