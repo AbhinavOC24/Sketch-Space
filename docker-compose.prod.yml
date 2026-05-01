@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  sketch-db:
+    image: postgres:15-alpine
+    container_name: sketch-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: sketchspace
+    ports:
+      - "5433:5432"
+    volumes:
+      - sketch_data:/var/lib/postgresql/data
+
+  sketch-http:
+    image: ghcr.io/${REPO_OWNER}/sketch-space/http-backend:latest
+    container_name: sketch-http
+    restart: always
+    depends_on:
+      - sketch-db
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-password}@sketch-db:5432/sketchspace
+      JWTSECRET: ${JWT_SECRET}
+      FRONTEND_URL: https://sketchspace.duckdns.org
+      NODE_ENV: production
+    ports:
+      - "8001:8001"
+
+  sketch-ws:
+    image: ghcr.io/${REPO_OWNER}/sketch-space/ws-backend:latest
+    container_name: sketch-ws
+    restart: always
+    depends_on:
+      - sketch-db
+    environment:
+      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-password}@sketch-db:5432/sketchspace
+      JWTSECRET: ${JWT_SECRET}
+      NODE_ENV: production
+    ports:
+      - "8002:8002"
+
+  sketch-frontend:
+    image: ghcr.io/${REPO_OWNER}/sketch-space/frontend:latest
+    container_name: sketch-frontend
+    restart: always
+    environment:
+      NODE_ENV: production
+    ports:
+      - "3001:3001"
+
+volumes:
+  sketch_data:
