@@ -24,7 +24,9 @@ jobs:
         run: npm install
       - name: Build HTTP Backend
         working-directory: ./http-backend
-        run: npm run build
+        run: |
+          npx prisma generate
+          npm run build
 
   ws-backend-ci:
     runs-on: ubuntu-latest
@@ -41,7 +43,9 @@ jobs:
         run: npm install
       - name: Build WS Backend
         working-directory: ./ws-backend
-        run: npm run build
+        run: |
+          npx prisma generate
+          npm run build
 
   frontend-ci:
     runs-on: ubuntu-latest
