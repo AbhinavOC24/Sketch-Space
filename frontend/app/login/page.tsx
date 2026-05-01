@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-import * as LucideIcons from "lucide-react";
+import { Pen } from "lucide-react";
 
 import {
   Card,
@@ -25,7 +25,7 @@ interface formInterface {
 }
 
 export default function LoginPage() {
-  const { Pen } = LucideIcons as any;
+
   const [formData, updateFormData] = useState<formInterface>({
     email: "",
     password: "",

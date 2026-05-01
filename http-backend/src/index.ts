@@ -77,7 +77,7 @@ app.post("/signup", async (req: Request, res: Response) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     });
     res.status(201).json({
       token,
@@ -134,7 +134,7 @@ app.post("/login", async (req: Request, res: Response) => {
     res.cookie("token", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "none",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     });
     res.status(200).json({
       token,
@@ -147,7 +147,7 @@ app.post("/login", async (req: Request, res: Response) => {
   }
 });
 
-app.get("/logout", checkAuth, async (req: Request, res: Response) => {
+app.get("/logout", async (req: Request, res: Response) => {
   try {
     res.clearCookie("token");
     res.status(200).json({ message: "logged out succesfully" });

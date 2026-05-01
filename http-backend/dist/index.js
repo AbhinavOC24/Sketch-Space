@@ -81,7 +81,7 @@ app.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.cookie("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "none",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         });
         res.status(201).json({
             token,
@@ -133,7 +133,7 @@ app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.cookie("token", token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === "production",
-            sameSite: "none",
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         });
         res.status(200).json({
             token,
@@ -146,7 +146,7 @@ app.post("/login", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.status(500).json({ error: e });
     }
 }));
-app.get("/logout", checkAuth_1.default, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+app.get("/logout", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         res.clearCookie("token");
         res.status(200).json({ message: "logged out succesfully" });

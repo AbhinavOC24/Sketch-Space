@@ -1,4 +1,3 @@
-// @ts-ignore
 import { Pencil, Share2, Users } from "lucide-react";
 
 const features = [

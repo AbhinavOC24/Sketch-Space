@@ -7,16 +7,14 @@ export function drawArrow(
   endX: number,
   endY: number
 ) {
-  const headLength = 20; // Length of the arrow head
+  const headLength = 20;
   const angle = Math.atan2(endY - startY, endX - startX);
 
-  // Draw the main line
   ctx.beginPath();
   ctx.moveTo(startX, startY);
   ctx.lineTo(endX, endY);
   ctx.stroke();
 
-  // Draw the arrow head
   ctx.beginPath();
   ctx.moveTo(endX, endY);
   ctx.lineTo(
@@ -33,40 +31,42 @@ export function drawArrow(
 
 export function intersectsEraser(
   shape: Shape,
-  eraserPoints: { x: number; y: number }[]
+  eraserPoints: { x: number; y: number }[],
+  eraserRadius: number = 10
 ): boolean {
   for (const pt of eraserPoints) {
     if (shape.type === "rect") {
-      if (
-        pt.x >= shape.x &&
-        pt.x <= shape.x + shape.width &&
-        pt.y >= shape.y &&
-        pt.y <= shape.y + shape.height
-      ) {
+      const xStart = Math.min(shape.x, shape.x + shape.width!) - eraserRadius;
+      const xEnd = Math.max(shape.x, shape.x + shape.width!) + eraserRadius;
+      const yStart = Math.min(shape.y, shape.y + shape.height!) - eraserRadius;
+      const yEnd = Math.max(shape.y, shape.y + shape.height!) + eraserRadius;
+      if (pt.x >= xStart && pt.x <= xEnd && pt.y >= yStart && pt.y <= yEnd) {
         return true;
       }
     }
+    
     if (shape.type === "circle") {
-      const dx = pt.x - shape.centerX;
-      const dy = pt.y - shape.centerY;
-      if (Math.sqrt(dx * dx + dy * dy) <= shape.radius) {
+      const dx = pt.x - shape.centerX!;
+      const dy = pt.y - shape.centerY!;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance <= shape.radius! + eraserRadius) {
         return true;
       }
     }
 
-    if (shape.type === "pencil" || shape.type === "eraser") {
-      for (const p of shape.points) {
+    if (shape.type === "pencil") {
+      for (const p of shape.points!) {
         const dx = pt.x - p.x;
         const dy = pt.y - p.y;
-        if (Math.sqrt(dx * dx + dy * dy) <= 10) return true;
+        if (Math.sqrt(dx * dx + dy * dy) <= (shape.strokeWidth || 5) + eraserRadius) return true;
       }
     }
 
     if (shape.type === "arrow") {
-      const minX = Math.min(shape.startX, shape.endX);
-      const maxX = Math.max(shape.startX, shape.endX);
-      const minY = Math.min(shape.startY, shape.endY);
-      const maxY = Math.max(shape.startY, shape.endY);
+      const minX = Math.min(shape.startX!, shape.endX!) - eraserRadius;
+      const maxX = Math.max(shape.startX!, shape.endX!) + eraserRadius;
+      const minY = Math.min(shape.startY!, shape.endY!) - eraserRadius;
+      const maxY = Math.max(shape.startY!, shape.endY!) + eraserRadius;
       if (pt.x >= minX && pt.x <= maxX && pt.y >= minY && pt.y <= maxY) {
         return true;
       }
@@ -74,12 +74,12 @@ export function intersectsEraser(
 
     if (shape.type === "text") {
       const fontSize = shape.fontSize || 16;
-      const textWidth = shape.text.length * fontSize * 0.6;
+      const textWidth = (shape.text?.length || 0) * fontSize * 0.6;
       if (
-        pt.x >= shape.x &&
-        pt.x <= shape.x + textWidth &&
-        pt.y >= shape.y - fontSize &&
-        pt.y <= shape.y
+        pt.x >= shape.x! - eraserRadius &&
+        pt.x <= shape.x! + textWidth + eraserRadius &&
+        pt.y >= shape.y! - fontSize - eraserRadius &&
+        pt.y <= shape.y! + eraserRadius
       ) {
         return true;
       }

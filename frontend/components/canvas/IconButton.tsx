@@ -7,7 +7,7 @@ function IconButton({
   currShape,
 }: {
   Icon: ReactNode;
-  changeShape: any;
+  changeShape: (value: string) => void;
   value: string;
   currShape: string;
 }) {

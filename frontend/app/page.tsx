@@ -1,53 +1,54 @@
 "use client";
 
 import type React from "react";
-
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-// @ts-ignore
-import * as LucideIcons from "lucide-react";
-
+import {
+  Pen,
+  Users,
+  Share2,
+  ChevronRight,
+  Loader2,
+  LinkIcon,
+  ArrowRight,
+  Zap,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { CreateRoomModal } from "@/components/create-room-modal";
+import { JoinRoomModal } from "@/components/join-room-modal";
 import { jwtDecode } from "jwt-decode";
+import Hero from "@/components/Hero";
 
 export function isTokenValid(token: string | null): boolean {
   if (!token) return false;
-
   try {
     const decoded: { exp: number } = jwtDecode(token);
-    const isExpired = decoded.exp * 1000 < Date.now();
-    return !isExpired;
-  } catch (err) {
-    err = false;
+    return decoded.exp * 1000 >= Date.now();
+  } catch {
     return false;
   }
 }
+
 export default function LandingPage() {
   const router = useRouter();
-  const { Pen, Users, Share2, ChevronRight, Loader2, X, LinkIcon } =
-    LucideIcons as any;
-
+  const [mounted, setMounted] = useState<boolean>(false);
   const [loginStatus, updateLoginStatus] = useState<boolean>(false);
   const [logoutLoading, setLogoutLoading] = useState<boolean>(false);
   const [isJoinModalOpen, setIsJoinModalOpen] = useState<boolean>(false);
-  const [roomLink, setRoomLink] = useState<string>("");
-  const [joinRoomLoading, setJoinRoomLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-
-    if (!token || !isTokenValid(token)) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("userId");
-      localStorage.removeItem("username");
-      updateLoginStatus(false);
-      console.log("Token expired or invalid, logging out");
-    } else {
-      updateLoginStatus(true);
+    setMounted(true);
+    if (typeof window !== "undefined" && typeof localStorage !== "undefined" && typeof localStorage.getItem === "function") {
+      const token = localStorage.getItem("token");
+      if (!token || !isTokenValid(token)) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("username");
+        updateLoginStatus(false);
+      } else {
+        updateLoginStatus(true);
+      }
     }
   }, []);
 
@@ -60,374 +61,187 @@ export default function LandingPage() {
       localStorage.removeItem("token");
       localStorage.removeItem("userId");
       localStorage.removeItem("username");
-
       updateLoginStatus(false);
       router.push("/");
     } catch (err) {
       console.error("Logout failed", err);
-      // Optionally: show a toast / error
     } finally {
       setLogoutLoading(false);
     }
   };
 
-  const handleJoinRoom = async () => {
-    if (!roomLink.trim()) return;
-
-    try {
-      setJoinRoomLoading(true);
-
-      console.log("Joining room with link:", roomLink);
-      setIsJoinModalOpen(false);
-      setRoomLink("");
-
-      // Navigate to the room
-      router.push(roomLink);
-    } catch (err) {
-      console.error("Failed to join room", err);
-    } finally {
-      setJoinRoomLoading(false);
-    }
-  };
-
-  const handleJoinKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      handleJoinRoom();
-    }
-  };
-
-  const openJoinModal = () => setIsJoinModalOpen(true);
-  const closeJoinModal = () => {
-    setIsJoinModalOpen(false);
-    setRoomLink("");
-  };
-
   return (
-    <div className="min-h-screen bg-zinc-950 text-white flex flex-col">
-      <header className="container mx-auto py-6 px-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Pen className="size-6 text-purple-400" />
-          <span className="text-xl font-bold">SketchSpace</span>
-        </div>
-        {!loginStatus ? (
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              className="text-gray-300 border hover:text-white hover:bg-zinc-800"
-              asChild
-            >
-              <Link href="/login">Login</Link>
-            </Button>
-            <Button
-              variant="outline"
-              className="border-purple-500 text-purple-400 hover:bg-purple-500/10 bg-transparent"
-              asChild
-            >
-              <Link href="/signup">Sign Up</Link>
-            </Button>
+    <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col font-sans antialiased">
+      {/* Subtle grid background */}
+      <div
+        className="fixed inset-0 pointer-events-none opacity-20"
+        style={{
+          backgroundImage: `radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0)`,
+          backgroundSize: "40px 40px",
+        }}
+      />
+
+      {/* Purple glow */}
+      <div className="fixed top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-purple-600/5 blur-[120px] pointer-events-none rounded-full" />
+
+      {/* ── NAV ── */}
+      <header className="fixed top-0 left-0 right-0 z-50 border-b border-white/[0.06] bg-black/50 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Pen className="size-5 text-purple-500" strokeWidth={2.5} />
+            <span className="text-lg font-bold tracking-tight">SketchSpace</span>
           </div>
-        ) : (
-          <Button
-            variant="outline"
-            className=" text-white cursor-pointer font-bold hover:bg-purple-500/10 bg-transparent"
-            disabled={logoutLoading}
-            onClick={handleLogOut}
-          >
-            {logoutLoading ? (
-              <span className="flex items-center gap-2">
-                <Loader2 className="size-4 animate-spin" />
-                Logging out...
-              </span>
+
+          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
+            <a href="https://github.com/AbhinavOC24/Sketch-Space" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-1.5">
+              <svg className="size-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.744.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+              </svg>
+              GitHub
+            </a>
+
+          </nav>
+
+          <div className="flex items-center gap-4">
+            {!mounted ? (
+              <div className="h-8 w-20 rounded-lg bg-white/[0.05] animate-pulse" />
+            ) : !loginStatus ? (
+              <>
+                <Link href="/login" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">Log in</Link>
+                <Link href="/signup" className="text-sm bg-purple-600 hover:bg-purple-500 text-white px-5 py-2 rounded-xl transition-all font-bold shadow-[0_0_15px_rgba(147,51,234,0.3)]">Sign up</Link>
+              </>
             ) : (
-              "Log Out"
+              <button
+                onClick={handleLogOut}
+                disabled={logoutLoading}
+                className="text-sm font-medium text-zinc-400 hover:text-white transition-colors flex items-center gap-2"
+              >
+                {logoutLoading ? <Loader2 className="size-4 animate-spin" /> : "Log out"}
+              </button>
             )}
-          </Button>
-        )}
+          </div>
+        </div>
       </header>
 
-      <main className="flex-1">
-        <section className="container mx-auto px-4 py-16 md:py-24">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-                Collaborative whiteboarding{" "}
-                <span className="text-purple-400">reimagined</span>
-              </h1>
-              <p className="text-lg text-gray-400 max-w-xl">
-                Create, collaborate, and share diagrams and sketches in
-                real-time with anyone, anywhere. No learning curve, just pure
-                creativity.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                {loginStatus ? (
-                  <>
-                    <CreateRoomModal>
-                      <Button
-                        size="lg"
-                        className="bg-purple-600 hover:bg-purple-700 cursor-pointer text-white px-8 py-6 text-lg rounded-xl"
-                      >
-                        <span className="flex items-center gap-2">
-                          Create Room
-                          <ChevronRight className="size-5" />
-                        </span>
-                      </Button>
-                    </CreateRoomModal>
-                    <Button
-                      variant="outline"
-                      size="lg"
-                      className="border-zinc-700 text-gray-300 hover:bg-zinc-800 px-8 py-6 text-lg rounded-xl bg-transparent"
-                      onClick={openJoinModal}
-                    >
-                      <span className="flex items-center gap-2">
-                        Join Room
-                        <LinkIcon className="size-5" />
-                      </span>
-                    </Button>
-                  </>
-                ) : (
-                  <Button
-                    size="lg"
-                    className="bg-purple-600 hover:bg-purple-700 cursor-pointer text-white px-8 py-6 text-lg rounded-xl"
-                    onClick={() => router.push("/login")}
-                  >
-                    <span className="flex items-center gap-2">
-                      Login to Create or Join Room
-                      <ChevronRight className="size-5" />
-                    </span>
-                  </Button>
-                )}
-              </div>
-            </div>
+      <main className="relative z-10 flex-1">
+        <Hero>
+          {mounted && (
+            loginStatus ? (
+              <>
+                <CreateRoomModal>
+                  <button className="group px-8 py-3.5 rounded-full bg-purple-600 hover:bg-purple-500 text-white font-bold transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(147,51,234,0.3)] flex items-center gap-2">
+                    Create a room
+                    <ArrowRight className="size-4 group-hover:translate-x-0.5 transition-transform" />
+                  </button>
+                </CreateRoomModal>
+                <button
+                  onClick={() => setIsJoinModalOpen(true)}
+                  className="px-8 py-3.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white font-bold transition-all active:scale-95 flex items-center gap-2"
+                >
+                  <LinkIcon className="size-4 text-purple-400" />
+                  Join a room
+                </button>
+              </>
+            ) : (
+              <>
+                <Link href="/signup" className="px-8 py-3.5 rounded-full bg-purple-600 hover:bg-purple-500 text-white font-bold transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(147,51,234,0.3)]">
+                  Get Started Free
+                </Link>
+                <button
+                  onClick={() => router.push("#features")}
+                  className="px-8 py-3.5 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 text-white font-bold transition-all active:scale-95"
+                >
+                  Learn More
+                </button>
+              </>
+            )
+          )}
+        </Hero>
 
-            <div className="relative">
-              <div className="absolute -top-20 -left-20 size-64 bg-purple-500/20 rounded-full blur-3xl"></div>
-              <div className="absolute -bottom-20 -right-20 size-64 bg-blue-500/20 rounded-full blur-3xl"></div>
-
-              <div className="relative bg-zinc-900 border border-zinc-800 rounded-xl p-4 shadow-xl">
-                <div className="absolute top-4 left-4 flex gap-2">
-                  <div className="size-3 rounded-full bg-red-500"></div>
-                  <div className="size-3 rounded-full bg-yellow-500"></div>
-                  <div className="size-3 rounded-full bg-green-500"></div>
+        {/* ── FEATURES ── */}
+        <section id="features" className="max-w-7xl mx-auto px-6 py-24 mt-20">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                icon: <Pen className="size-6 text-purple-400" />,
+                title: "Precision Drawing",
+                desc: "Every stroke is sharp, every shape is perfect. Built on top of high-performance canvas tech.",
+              },
+              {
+                icon: <Users className="size-6 text-purple-400" />,
+                title: "Live Multiplayer",
+                desc: "Work together in real-time. See cursors, selections, and updates as they happen with zero lag.",
+              },
+              {
+                icon: <Share2 className="size-6 text-purple-400" />,
+                title: "One-Click Sharing",
+                desc: "No complicated export steps. Just copy the URL and your team is in. It's that simple.",
+              },
+            ].map((f, i) => (
+              <div key={i} className="group relative rounded-2xl border border-white/[0.06] bg-white/[0.02] p-8 transition-all hover:bg-white/[0.04]">
+                <div className="mb-6 size-12 rounded-xl bg-purple-500/10 flex items-center justify-center border border-purple-500/20 group-hover:scale-110 transition-transform">
+                  {f.icon}
                 </div>
-
-                <div className="pt-8 pb-4">
-                  <div className="flex justify-center">
-                    <svg
-                      width="400"
-                      height="240"
-                      viewBox="0 0 400 240"
-                      className="max-w-full h-auto"
-                    >
-                      <rect
-                        x="10"
-                        y="10"
-                        width="380"
-                        height="220"
-                        rx="4"
-                        fill="#1a1a1a"
-                      />
-                      <circle
-                        cx="120"
-                        cy="80"
-                        r="30"
-                        fill="none"
-                        stroke="#6366f1"
-                        strokeWidth="2"
-                      />
-                      <rect
-                        x="220"
-                        y="50"
-                        width="80"
-                        height="60"
-                        rx="2"
-                        fill="none"
-                        stroke="#ec4899"
-                        strokeWidth="2"
-                      />
-                      <path
-                        d="M120 110 L220 80"
-                        stroke="#10b981"
-                        strokeWidth="2"
-                      />
-                      <path
-                        d="M220 110 L180 160"
-                        stroke="#f59e0b"
-                        strokeWidth="2"
-                      />
-                      <path
-                        d="M120 110 L80 160"
-                        stroke="#f59e0b"
-                        strokeWidth="2"
-                      />
-                      <rect
-                        x="60"
-                        y="160"
-                        width="40"
-                        height="30"
-                        rx="2"
-                        fill="none"
-                        stroke="#6366f1"
-                        strokeWidth="2"
-                      />
-                      <rect
-                        x="160"
-                        y="160"
-                        width="40"
-                        height="30"
-                        rx="2"
-                        fill="none"
-                        stroke="#6366f1"
-                        strokeWidth="2"
-                      />
-                      <g transform="translate(250, 140)">
-                        <path d="M0,0 L10,16 L4,16 L0,24 Z" fill="white" />
-                      </g>
-                      <g transform="translate(150, 70)">
-                        <circle cx="0" cy="0" r="4" fill="#f97316" />
-                        <text x="8" y="4" fontSize="10" fill="#f97316">
-                          User 1
-                        </text>
-                      </g>
-                      <g transform="translate(280, 120)">
-                        <circle cx="0" cy="0" r="4" fill="#06b6d4" />
-                        <text x="8" y="4" fontSize="10" fill="#06b6d4">
-                          User 2
-                        </text>
-                      </g>
-                    </svg>
-                  </div>
-                </div>
+                <h3 className="text-lg font-bold mb-3">{f.title}</h3>
+                <p className="text-zinc-500 leading-relaxed text-sm">{f.desc}</p>
               </div>
-            </div>
+            ))}
           </div>
         </section>
 
-        <section className="container mx-auto px-4 py-16 border-t border-zinc-900">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-zinc-900/50 p-6 rounded-xl">
-              <div className="bg-purple-500/10 p-3 rounded-lg w-fit mb-4">
-                <Pen className="size-6 text-purple-400" />
-              </div>
-              <h3 className="text-xl font-medium mb-2">Intuitive Drawing</h3>
-              <p className="text-gray-400">
-                Simple tools for sketching ideas quickly and efficiently.
+        {/* ── CTA BANNER ── */}
+        <section className="max-w-7xl mx-auto px-6 pb-32">
+          <div className="relative rounded-[2.5rem] border border-purple-500/20 bg-purple-950/20 p-16 text-center overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-purple-500/10 to-transparent pointer-events-none" />
+            <div className="relative z-10 max-w-2xl mx-auto">
+              <Zap className="size-10 text-purple-400 mx-auto mb-6" strokeWidth={1.5} />
+              <h2 className="text-4xl font-black mb-4 tracking-tight">Ready to start sketching?</h2>
+              <p className="text-zinc-400 text-lg mb-10">
+                Join thousands of teams using SketchSpace to map out their ideas. No registration required to view.
               </p>
-            </div>
-            <div className="bg-zinc-900/50 p-6 rounded-xl">
-              <div className="bg-blue-500/10 p-3 rounded-lg w-fit mb-4">
-                <Users className="size-6 text-blue-400" />
-              </div>
-              <h3 className="text-xl font-medium mb-2">
-                Real-time Collaboration
-              </h3>
-              <p className="text-gray-400">
-                Work together with your team seamlessly in real-time.
-              </p>
-            </div>
-            <div className="bg-zinc-900/50 p-6 rounded-xl">
-              <div className="bg-green-500/10 p-3 rounded-lg w-fit mb-4">
-                <Share2 className="size-6 text-green-400" />
-              </div>
-              <h3 className="text-xl font-medium mb-2">Instant Sharing</h3>
-              <p className="text-gray-400">
-                Share your creations with a simple link, no sign-up required.
-              </p>
+              {loginStatus ? (
+                <CreateRoomModal>
+                  <button className="h-14 inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-500 text-white text-lg font-bold px-10 rounded-2xl transition-all shadow-[0_0_25px_rgba(147,51,234,0.4)] hover:scale-105 active:scale-95">
+                    Create your free room
+                    <ChevronRight className="size-5" />
+                  </button>
+                </CreateRoomModal>
+              ) : (
+                <Link
+                  href="/signup"
+                  className="h-14 inline-flex items-center gap-2 bg-purple-600 hover:bg-purple-500 text-white text-lg font-bold px-10 rounded-2xl transition-all shadow-[0_0_25px_rgba(147,51,234,0.4)] hover:scale-105 active:scale-95"
+                >
+                  Get started — for free
+                  <ChevronRight className="size-5" />
+                </Link>
+              )}
             </div>
           </div>
         </section>
       </main>
 
-      <footer className="container mx-auto py-8 px-4 border-t border-zinc-900 text-center text-gray-500 text-sm">
-        <div className="flex justify-center items-center gap-2 mb-4">
-          <Pen className="size-4 text-purple-400" />
-          <span className="font-medium text-gray-400">SketchSpace</span>
+      <footer className="border-t border-white/[0.06] bg-black/50 py-12">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div className="flex items-center gap-2">
+            <Pen className="size-4 text-purple-500" />
+            <span className="font-bold">SketchSpace</span>
+          </div>
+          <div className="text-sm text-zinc-600">
+            © {new Date().getFullYear()} SketchSpace. Built with passion for creators.
+          </div>
+          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
+            <a href="https://github.com/AbhinavOC24/Sketch-Space" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors flex items-center gap-1.5">
+              <svg className="size-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.744.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+              </svg>
+              GitHub
+            </a>
+            <a href="#collab" className="hover:text-white transition-colors">Collaborate</a>
+          </nav>
         </div>
-        <p>© {new Date().getFullYear()} SketchSpace. All rights reserved.</p>
       </footer>
 
-      {/* Join Room Modal */}
-      {isJoinModalOpen && (
-        <>
-          {/* Overlay */}
-          <div
-            className="fixed inset-0 z-40 bg-black/80"
-            onClick={closeJoinModal}
-          />
-
-          {/* Modal Content */}
-          <div className="fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-zinc-900 border-zinc-800 p-6 shadow-lg sm:rounded-lg text-white">
-            {/* Close Button */}
-            <button
-              onClick={closeJoinModal}
-              className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-            >
-              <X className="h-4 w-4" />
-              <span className="sr-only">Close</span>
-            </button>
-
-            {/* Header */}
-            <div className="flex flex-col space-y-1.5 text-center sm:text-left">
-              <h2 className="text-xl font-bold text-center text-white">
-                Join Room
-              </h2>
-              <p className="text-center text-zinc-400">
-                Paste the room link here to join the collaborative session
-              </p>
-            </div>
-
-            {/* Form */}
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <label
-                  htmlFor="roomLink"
-                  className="text-sm font-medium text-zinc-200"
-                >
-                  Room Link
-                </label>
-                <Input
-                  id="roomLink"
-                  placeholder="Paste the URL Link here"
-                  value={roomLink}
-                  onChange={(e) => setRoomLink(e.target.value)}
-                  onKeyPress={handleJoinKeyPress}
-                  className="bg-zinc-800/50 border-zinc-700 text-white focus:border-purple-500 focus:ring-purple-500/20"
-                  autoFocus
-                  disabled={joinRoomLoading}
-                />
-              </div>
-            </div>
-
-            {/* Footer */}
-            <div className="flex flex-col sm:flex-row gap-2">
-              <Button
-                variant="outline"
-                onClick={closeJoinModal}
-                className="border-zinc-700 text-gray-300 hover:bg-zinc-800 bg-transparent"
-                disabled={joinRoomLoading}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleJoinRoom}
-                disabled={!roomLink.trim() || joinRoomLoading}
-                className="bg-purple-600 hover:bg-purple-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {joinRoomLoading ? (
-                  <span className="flex items-center gap-2">
-                    <Loader2 className="size-4 animate-spin" />
-                    Joining...
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-2">
-                    Join Room
-                    <LinkIcon className="size-4" />
-                  </span>
-                )}
-              </Button>
-            </div>
-          </div>
-        </>
-      )}
+      <JoinRoomModal isOpen={isJoinModalOpen} onClose={() => setIsJoinModalOpen(false)} />
     </div>
   );
 }

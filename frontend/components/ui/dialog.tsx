@@ -3,9 +3,7 @@
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
-import * as LucideIcons from "lucide-react";
-
-const { X } = LucideIcons as any;
+import { X } from "lucide-react";
 interface DialogProps {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -46,8 +44,13 @@ const DialogContent = React.forwardRef<HTMLDivElement, DialogContentProps>(
 );
 DialogContent.displayName = "DialogContent";
 
-const DialogOverlay = ({ onClick }: { onClick?: () => void }) => (
-  <div className="fixed inset-0 z-40 bg-black/80" onClick={onClick} />
+interface DialogOverlayProps {
+  onClick?: () => void;
+  className?: string;
+}
+
+const DialogOverlay = ({ onClick, className }: DialogOverlayProps) => (
+  <div className={cn("fixed inset-0 z-40 bg-black/80", className)} onClick={onClick} />
 );
 
 const DialogHeader = ({

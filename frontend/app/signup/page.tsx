@@ -14,7 +14,7 @@ import {
 import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import * as LucideIcons from "lucide-react";
+import { Pen } from "lucide-react";
 
 interface formInterface {
   username: string;
@@ -24,7 +24,7 @@ interface formInterface {
 
 export default function SignupPage() {
   const router = useRouter();
-  const { Pen } = LucideIcons as any;
+
   const [formData, updateFormData] = useState<formInterface>({
     username: "",
     email: "",
@@ -63,7 +63,7 @@ export default function SignupPage() {
       localStorage.setItem("username", response.data.username);
       localStorage.setItem("userId", response.data.userId);
       router.push("/");
-    } catch (e: any) {
+    } catch (e: unknown) {
       if (e instanceof Error) console.error("Signup failed", e.message);
       setWarning("Signup failed. Please try again.");
     }

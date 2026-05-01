@@ -1,10 +1,23 @@
 import type React from "react";
+// Polyfill localStorage for Node.js environments (especially Node 25 stub issues)
+if (typeof window === "undefined") {
+  if (typeof global !== "undefined") {
+    (global as any).localStorage = {
+      getItem: () => null,
+      setItem: () => {},
+      removeItem: () => {},
+      clear: () => {},
+      length: 0,
+      key: () => null,
+    };
+  }
+}
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 
-const inter = Inter({ subsets: ["latin"] });
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 
 export const metadata: Metadata = {
   title: "SketchSpace - Collaborative Whiteboarding",
@@ -18,16 +31,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
       <body
-        className={`${inter.className} min-h-screen bg-zinc-950 text-white antialiased`}
+        className={`${geist.variable} font-sans min-h-screen bg-[#0a0a0a] text-white antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem={false}
-          disableTransitionOnChange
-        >
+        <ThemeProvider>
           {children}
         </ThemeProvider>
       </body>

@@ -1,166 +1,128 @@
 "use client";
 
-import * as LucideIcons from "lucide-react";
-
+import React from "react";
+import { AlignLeft, AlignCenter, AlignRight, Bold, Type } from "lucide-react";
 import { useDrawingSettings } from "@/stores/StyleOptionStore";
+import { cn } from "@/lib/utils";
 
 const strokeColors = ["#ffffff", "#d1d5db", "#f87171", "#60a5fa"];
-
 const backgroundColors = ["#ffffff", "#9ca3af", "#7f1d1d", "#15803d"];
+
+// --- Shared Components ---
+
+const SidebarContainer = ({ children }: { children: React.ReactNode }) => (
+  <div className="w-56 overflow-hidden rounded-2xl border border-white/10 bg-black/40 p-4 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.4)] animate-in fade-in slide-in-from-left-4 duration-300">
+    <div className="flex flex-col gap-5">{children}</div>
+  </div>
+);
+
+const SectionTitle = ({ children }: { children: React.ReactNode }) => (
+  <h3 className="mb-2.5 text-[11px] font-bold uppercase tracking-wider text-white/40">{children}</h3>
+);
+
+const ColorButton = ({ color, isActive, onClick }: { color: string, isActive: boolean, onClick: () => void }) => (
+  <button
+    onClick={onClick}
+    className={cn(
+      "h-7 w-7 rounded-lg border transition-all duration-200 hover:scale-110 active:scale-95",
+      isActive ? "border-white shadow-[0_0_10px_rgba(255,255,255,0.2)]" : "border-white/10 hover:border-white/30"
+    )}
+    style={{ backgroundColor: color }}
+  />
+);
+
+const CustomColorInput = ({ value, onChange, isActive }: { value: string, onChange: (val: string) => void, isActive: boolean }) => (
+  <div className="relative group">
+    <div
+      className={cn(
+        "h-7 w-7 rounded-lg border transition-all duration-200 group-hover:scale-110",
+        isActive ? "border-white shadow-[0_0_10px_rgba(255,255,255,0.2)]" : "border-white/10 group-hover:border-white/30"
+      )}
+      style={{ backgroundColor: value }}
+    />
+    <input
+      type="color"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+    />
+  </div>
+);
+
+// --- Sidebars ---
 
 export function DrawingSettingsSidebar() {
   const {
-    strokeColor,
-    setStrokeColorByIndex,
-    setCustomStrokeColor,
-    backgroundColor,
-    setBackgroundColorByIndex,
-    setCustomBackgroundColor,
-    fillStyle,
-    setFillStyle,
-    strokeWidth,
-    setStrokeWidth,
-    opacity,
-    setOpacity,
+    strokeColor, setStrokeColorByIndex, setCustomStrokeColor,
+    backgroundColor, setBackgroundColorByIndex, setCustomBackgroundColor,
+    fillStyle, setFillStyle,
+    strokeWidth, setStrokeWidth,
+    opacity, setOpacity,
   } = useDrawingSettings();
 
   return (
-    <div className="w-52 bg-[#2D2D2D] text-white p-3 font-sans text-sm rounded-lg">
-      {/* Stroke Color */}
-      <div className="mb-4">
-        <h3 className="text-sm font-medium mb-2">Stroke</h3>
-        <div className="flex gap-1 flex-wrap">
+    <SidebarContainer>
+      {/* Stroke */}
+      <div>
+        <SectionTitle>Stroke Color</SectionTitle>
+        <div className="flex flex-wrap gap-2">
           {strokeColors.map((color, index) => (
-            <button
-              key={index}
-              onClick={() => setStrokeColorByIndex(index)}
-              className={`w-8 h-8 rounded-md border ${
-                strokeColor === color ? "border-white" : "border-gray-600"
-              }`}
-              style={{ backgroundColor: color }}
-            />
+            <ColorButton key={index} color={color} isActive={strokeColor === color} onClick={() => setStrokeColorByIndex(index)} />
           ))}
-          {/* Custom stroke color input */}
-          <div className="relative">
-            <button
-              className={`w-8 h-8 rounded-md border ${
-                !strokeColors.includes(strokeColor)
-                  ? "border-white"
-                  : "border-gray-600"
-              }`}
-              style={{ backgroundColor: strokeColor }}
-            />
-            <input
-              type="color"
-              value={strokeColor}
-              onChange={(e) => setCustomStrokeColor(e.target.value)}
-              className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-              aria-label="Custom stroke color"
-            />
-          </div>
+          <CustomColorInput value={strokeColor} onChange={setCustomStrokeColor} isActive={!strokeColors.includes(strokeColor)} />
         </div>
       </div>
 
-      {/* Background Color */}
-      <div className="mb-4">
-        <h3 className="text-sm font-medium mb-2">Background</h3>
-        <div className="flex gap-1 flex-wrap">
+      {/* Background */}
+      <div>
+        <SectionTitle>Background Color</SectionTitle>
+        <div className="flex flex-wrap gap-2">
           {backgroundColors.map((color, index) => (
-            <button
-              key={index}
-              onClick={() => setBackgroundColorByIndex(index)}
-              className={`w-8 h-8 rounded-md border ${
-                backgroundColor === color ? "border-white" : "border-gray-600"
-              }`}
-              style={{ backgroundColor: color }}
-            />
+            <ColorButton key={index} color={color} isActive={backgroundColor === color} onClick={() => setBackgroundColorByIndex(index)} />
           ))}
-          {/* Custom background color input */}
-          <div className="relative">
-            <button
-              className={`w-8 h-8 rounded-md border ${
-                !backgroundColors.includes(backgroundColor)
-                  ? "border-white"
-                  : "border-gray-600"
-              }`}
-              style={{ backgroundColor: backgroundColor }}
-            />
-            <input
-              type="color"
-              value={backgroundColor}
-              onChange={(e) => setCustomBackgroundColor(e.target.value)}
-              className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-              aria-label="Custom background color"
-            />
-          </div>
+          <CustomColorInput value={backgroundColor} onChange={setCustomBackgroundColor} isActive={!backgroundColors.includes(backgroundColor)} />
         </div>
       </div>
 
       {/* Fill Style */}
-      <div className="mb-4">
-        <h3 className="text-sm font-medium mb-2">Fill Style</h3>
-        <div className="flex gap-1">
-          {/* {["no fill", "solid"].map((style, index) => (
-              <button
-                key={index}
-                onClick={() => setFillStyle(index)}
-                className={`w-8 h-8 rounded-md border ${
-                  fillStyle === style
-                    ? "border-white bg-indigo-600"
-                    : "border-gray-600 bg-gray-700"
-                } flex items-center justify-center`}
-              >
-                <div className="w-4 h-4 bg-white rounded"></div>
-              </button>
-            ))} */}
+      <div>
+        <SectionTitle>Fill Style</SectionTitle>
+        <div className="flex gap-2">
           <button
             onClick={() => setFillStyle(0)}
-            className={`w-8 h-8 rounded-md border ${
-              fillStyle === "no fill"
-                ? "border-white bg-indigo-600"
-                : "border-gray-600 bg-gray-700"
-            } flex items-center justify-center`}
+            className={cn(
+              "flex h-9 flex-1 items-center justify-center rounded-xl border transition-all",
+              fillStyle === "no fill" ? "border-purple-500 bg-purple-600/20 text-purple-400" : "border-white/10 bg-white/5 text-white/40 hover:bg-white/10"
+            )}
           >
-            <div
-              className={`w-5 h-5 bg-gradient-to-br from-transparent via-white to-transparent transform rotate-45 ${
-                fillStyle === "no fill" ? "opacity-80" : "opacity-20"
-              }`}
-            ></div>
+            <div className={cn("h-4 w-4 border-2 border-current rotate-45 opacity-60", fillStyle === "no fill" ? "" : "border-dashed")} />
           </button>
           <button
             onClick={() => setFillStyle(1)}
-            className={`w-8 h-8 rounded-md border ${
-              fillStyle === "fill"
-                ? "border-white bg-indigo-600"
-                : "border-gray-600 bg-gray-700"
-            } flex items-center justify-center`}
+            className={cn(
+              "flex h-9 flex-1 items-center justify-center rounded-xl border transition-all",
+              fillStyle === "fill" ? "border-purple-500 bg-purple-600/20 text-purple-400" : "border-white/10 bg-white/5 text-white/40 hover:bg-white/10"
+            )}
           >
-            <div className="w-4 h-4 bg-white rounded"></div>
+            <div className="h-4 w-4 rounded-sm bg-current" />
           </button>
         </div>
       </div>
 
       {/* Stroke Width */}
-      <div className="mb-4">
-        <h3 className="text-sm font-medium mb-2">Stroke Width</h3>
-        <div className="flex gap-1">
-          {[1, 2, 4].map((width, index) => (
+      <div>
+        <SectionTitle>Stroke Width</SectionTitle>
+        <div className="flex gap-2">
+          {[1, 2, 4].map((width) => (
             <button
-              key={index}
-              onClick={() => setStrokeWidth(index)}
-              className={`w-8 h-8 rounded-md bg-gray-700 border ${
-                strokeWidth === width
-                  ? "border-white bg-indigo-600"
-                  : "border-gray-600"
-              } flex items-center justify-center`}
+              key={width}
+              onClick={() => setStrokeWidth([1, 2, 4].indexOf(width))}
+              className={cn(
+                "flex h-9 flex-1 items-center justify-center rounded-xl border transition-all",
+                strokeWidth === width ? "border-purple-500 bg-purple-600/20 text-purple-400" : "border-white/10 bg-white/5 text-white/40 hover:bg-white/10"
+              )}
             >
-              <div
-                className="bg-white rounded-full"
-                style={{
-                  width: "16px",
-                  height: `${width}px`,
-                }}
-              ></div>
+              <div className="bg-current rounded-full" style={{ width: "16px", height: `${width}px` }} />
             </button>
           ))}
         </div>
@@ -168,449 +130,217 @@ export function DrawingSettingsSidebar() {
 
       {/* Opacity */}
       <div>
-        <h3 className="text-sm font-medium mb-2">
-          Opacity
-          <span className="w-8 text-right text-xs ml-2 translate-y-[12px] text-gray-300">
-            {opacity}
-          </span>
-        </h3>
-
-        <input
-          type="range"
-          min={0}
-          max={100}
-          value={opacity}
-          onChange={(e) => setOpacity(Number(e.target.value))}
-          className="w-full"
-        />
-        <div className="flex justify-between text-xs text-gray-400 mt-1">
-          <span>0</span>
-          <span>100</span>
+        <div className="flex justify-between items-center mb-1">
+          <SectionTitle>Opacity</SectionTitle>
+          <span className="text-[10px] font-medium text-white/40">{opacity}%</span>
         </div>
+        <input
+          type="range" min={0} max={100} value={opacity}
+          onChange={(e) => setOpacity(Number(e.target.value))}
+          className="w-full accent-purple-500 h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer"
+        />
       </div>
-    </div>
+    </SidebarContainer>
   );
 }
 
 export function TextDrawingSettingsSidebar() {
-  const { AlignLeft, AlignCenter, AlignRight, Bold, Italic, Type } =
-    LucideIcons as any;
   const {
-    textStrokeColor,
-    setTextStrokeColorByIndex,
-    setCustomTextStrokeColor,
-    textFontWeight,
-    setTextFontWeight,
-    textFontSize,
-    setTextFontSize,
-    textAlign,
-    setTextAlign,
-    opacity,
-    setOpacity,
+    textStrokeColor, setTextStrokeColorByIndex, setCustomTextStrokeColor,
+    textFontWeight, setTextFontWeight,
+    textFontSize, setTextFontSize,
+    textAlign, setTextAlign,
+    opacity, setOpacity,
   } = useDrawingSettings();
 
-  const strokeColors = ["#ffffff", "#d1d5db", "#f87171", "#60a5fa"];
   const fontSizes = ["S", "M", "L", "XL"];
   const fontSizeValues = ["8", "12", "16", "60"];
-
   const fontStyles = ["normal", "bold", "Serif"];
   const textAlignment = ["left", "center", "right"];
 
   return (
-    <div className="w-52 bg-[#2D2D2D] text-white p-3 font-sans text-sm rounded-lg">
-      {/* Stroke */}
-      <div className="mb-4">
-        <h3 className="text-sm font-medium mb-2">Stroke</h3>
-        <div className="flex gap-1 flex-wrap">
+    <SidebarContainer>
+      <div>
+        <SectionTitle>Text Color</SectionTitle>
+        <div className="flex flex-wrap gap-2">
           {strokeColors.map((color, index) => (
-            <button
-              key={index}
-              onClick={() => setTextStrokeColorByIndex(index)}
-              className={`w-8 h-8 rounded-md border`}
-              style={{
-                backgroundColor: color,
-                borderColor: textStrokeColor === color ? "white" : "gray",
-              }}
-            />
+            <ColorButton key={index} color={color} isActive={textStrokeColor === color} onClick={() => setTextStrokeColorByIndex(index)} />
           ))}
-          <div className="relative">
-            <button
-              className={`w-8 h-8 rounded-md border ${
-                !strokeColors.includes(textStrokeColor)
-                  ? "border-white"
-                  : "border-gray-600"
-              }`}
-              style={{ backgroundColor: textStrokeColor }}
-            />
-            <input
-              type="color"
-              value={textStrokeColor}
-              onChange={(e) => setCustomTextStrokeColor(e.target.value)}
-              className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-              aria-label="Custom stroke color"
-            />
-          </div>
+          <CustomColorInput value={textStrokeColor} onChange={setCustomTextStrokeColor} isActive={!strokeColors.includes(textStrokeColor)} />
         </div>
       </div>
 
-      {/* Font Family */}
-      <div className="mb-4">
-        <h3 className="text-sm font-medium mb-2">Font Family</h3>
-        <div className="flex gap-1">
+      <div>
+        <SectionTitle>Font Style</SectionTitle>
+        <div className="flex gap-2">
           {fontStyles.map((style, index) => (
             <button
               key={index}
               onClick={() => setTextFontWeight(index)}
-              className={`w-8 h-8 rounded-md border ${
-                textFontWeight === fontStyles[index]
-                  ? "border-white bg-indigo-600"
-                  : "border-gray-600 bg-gray-700"
-              } flex items-center justify-center ${
-                style === "serif" ? "font-serif" : ""
-              }`}
-            >
-              {style === "normal" && <Type size={14} />}
-              {style === "bold" && <Bold size={14} />}
-              {style === "Serif" && (
-                <span className="text-xs font-bold ">A</span>
+              className={cn(
+                "flex h-9 flex-1 items-center justify-center rounded-xl border transition-all",
+                textFontWeight === style ? "border-purple-500 bg-purple-600/20 text-purple-400" : "border-white/10 bg-white/5 text-white/40 hover:bg-white/10"
               )}
+            >
+              {style === "normal" && <Type size={16} />}
+              {style === "bold" && <Bold size={16} />}
+              {style === "Serif" && <span className="text-sm font-bold font-serif">A</span>}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Font Size */}
-      <div className="mb-4">
-        <h3 className="text-sm font-medium mb-2">Font Size</h3>
-        <div className="flex gap-1">
+      <div>
+        <SectionTitle>Font Size</SectionTitle>
+        <div className="flex gap-2">
           {fontSizes.map((size, index) => (
             <button
               key={index}
               onClick={() => setTextFontSize(index)}
-              className={`w-8 h-8 rounded-md border ${
-                textFontSize === fontSizeValues[index]
-                  ? "border-white bg-indigo-600"
-                  : "border-gray-600 bg-gray-700"
-              } flex items-center justify-center text-xs font-medium`}
+              className={cn(
+                "flex h-9 flex-1 items-center justify-center rounded-xl border transition-all text-xs font-bold",
+                textFontSize === fontSizeValues[index] ? "border-purple-500 bg-purple-600/20 text-purple-400" : "border-white/10 bg-white/5 text-white/40 hover:bg-white/10"
+              )}
             >
-              {fontSizes[index]}
+              {size}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Text Align */}
-      <div className="mb-4">
-        <h3 className="text-sm font-medium mb-2">Text Align</h3>
-        <div className="flex gap-1">
+      <div>
+        <SectionTitle>Alignment</SectionTitle>
+        <div className="flex gap-2">
           {[AlignLeft, AlignCenter, AlignRight].map((Icon, index) => (
             <button
               key={index}
               onClick={() => setTextAlign(index)}
-              className={`w-8 h-8 rounded-md border ${
-                textAlign === textAlignment[index]
-                  ? "border-white bg-indigo-600"
-                  : "border-gray-600 bg-gray-700"
-              } flex items-center justify-center`}
+              className={cn(
+                "flex h-9 flex-1 items-center justify-center rounded-xl border transition-all",
+                textAlign === textAlignment[index] ? "border-purple-500 bg-purple-600/20 text-purple-400" : "border-white/10 bg-white/5 text-white/40 hover:bg-white/10"
+              )}
             >
-              <Icon size={14} />
+              <Icon size={16} />
             </button>
           ))}
         </div>
       </div>
 
-      {/* Opacity */}
       <div>
-        <h3 className="text-sm font-medium mb-2">
-          Opacity
-          <span className="w-8 text-right text-xs ml-2 translate-y-[12px] text-gray-300">
-            {opacity}
-          </span>
-        </h3>
-        <input
-          type="range"
-          min={0}
-          max={100}
-          value={opacity}
-          onChange={(e) => setOpacity(Number(e.target.value))}
-          className="w-full"
-        />
-        <div className="flex justify-between text-xs text-gray-400 mt-1">
-          <span>0</span>
-          <span>100</span>
+        <div className="flex justify-between items-center mb-1">
+          <SectionTitle>Opacity</SectionTitle>
+          <span className="text-[10px] font-medium text-white/40">{opacity}%</span>
         </div>
+        <input
+          type="range" min={0} max={100} value={opacity}
+          onChange={(e) => setOpacity(Number(e.target.value))}
+          className="w-full accent-purple-500 h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer"
+        />
       </div>
-    </div>
+    </SidebarContainer>
   );
 }
 
 export function ArrowSettingsSidebar() {
   const {
-    strokeColor,
-    setStrokeColorByIndex,
-    setCustomStrokeColor,
-
-    fillStyle,
-    setFillStyle,
-    strokeWidth,
-    setStrokeWidth,
-    opacity,
-    setOpacity,
+    strokeColor, setStrokeColorByIndex, setCustomStrokeColor,
+    strokeWidth, setStrokeWidth,
+    opacity, setOpacity,
   } = useDrawingSettings();
 
   return (
-    <div className="w-52 bg-[#2D2D2D] text-white p-3 font-sans text-sm rounded-lg">
-      {/* Stroke Color */}
-      <div className="mb-4">
-        <h3 className="text-sm font-medium mb-2">Stroke</h3>
-        <div className="flex gap-1 flex-wrap">
+    <SidebarContainer>
+      <div>
+        <SectionTitle>Stroke Color</SectionTitle>
+        <div className="flex flex-wrap gap-2">
           {strokeColors.map((color, index) => (
-            <button
-              key={index}
-              onClick={() => setStrokeColorByIndex(index)}
-              className={`w-8 h-8 rounded-md border ${
-                strokeColor === color ? "border-white" : "border-gray-600"
-              }`}
-              style={{ backgroundColor: color }}
-            />
+            <ColorButton key={index} color={color} isActive={strokeColor === color} onClick={() => setStrokeColorByIndex(index)} />
           ))}
-          {/* Custom stroke color input */}
-          <div className="relative">
-            <button
-              className={`w-8 h-8 rounded-md border ${
-                !strokeColors.includes(strokeColor)
-                  ? "border-white"
-                  : "border-gray-600"
-              }`}
-              style={{ backgroundColor: strokeColor }}
-            />
-            <input
-              type="color"
-              value={strokeColor}
-              onChange={(e) => setCustomStrokeColor(e.target.value)}
-              className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-              aria-label="Custom stroke color"
-            />
-          </div>
+          <CustomColorInput value={strokeColor} onChange={setCustomStrokeColor} isActive={!strokeColors.includes(strokeColor)} />
         </div>
       </div>
 
-      {/* Fill Style Change this later */}
-      {/* <div className="mb-4">
-        <h3 className="text-sm font-medium mb-2">Fill Style</h3>
-        <div className="flex gap-1">
-          <button
-            onClick={() => setFillStyle(0)}
-            className={`w-8 h-8 rounded-md border ${
-              fillStyle === "no fill"
-                ? "border-white bg-indigo-600"
-                : "border-gray-600 bg-gray-700"
-            } flex items-center justify-center`}
-          >
-            <div
-              className={`w-5 h-5 bg-gradient-to-br from-transparent via-white to-transparent transform rotate-45 ${
-                fillStyle === "no fill" ? "opacity-80" : "opacity-20"
-              }`}
-            ></div>
-          </button>
-          <button
-            onClick={() => setFillStyle(1)}
-            className={`w-8 h-8 rounded-md border ${
-              fillStyle === "fill"
-                ? "border-white bg-indigo-600"
-                : "border-gray-600 bg-gray-700"
-            } flex items-center justify-center`}
-          >
-            <div className="w-4 h-4 bg-white rounded"></div>
-          </button>
-        </div>
-      </div> */}
-
-      {/* Stroke Width */}
-      <div className="mb-4">
-        <h3 className="text-sm font-medium mb-2">Stroke Width</h3>
-        <div className="flex gap-1">
-          {[1, 2, 4].map((width, index) => (
+      <div>
+        <SectionTitle>Thickness</SectionTitle>
+        <div className="flex gap-2">
+          {[1, 2, 4].map((width) => (
             <button
-              key={index}
-              onClick={() => setStrokeWidth(index)}
-              className={`w-8 h-8 rounded-md bg-gray-700 border ${
-                strokeWidth === width
-                  ? "border-white bg-indigo-600"
-                  : "border-gray-600"
-              } flex items-center justify-center`}
+              key={width}
+              onClick={() => setStrokeWidth([1, 2, 4].indexOf(width))}
+              className={cn(
+                "flex h-9 flex-1 items-center justify-center rounded-xl border transition-all",
+                strokeWidth === width ? "border-purple-500 bg-purple-600/20 text-purple-400" : "border-white/10 bg-white/5 text-white/40 hover:bg-white/10"
+              )}
             >
-              <div
-                className="bg-white rounded-full"
-                style={{
-                  width: "16px",
-                  height: `${width}px`,
-                }}
-              ></div>
+              <div className="bg-current rounded-full" style={{ width: "16px", height: `${width}px` }} />
             </button>
           ))}
         </div>
       </div>
 
-      {/* Opacity */}
       <div>
-        <h3 className="text-sm font-medium mb-2">
-          Opacity
-          <span className="w-8 text-right text-xs ml-2 translate-y-[12px] text-gray-300">
-            {opacity}
-          </span>
-        </h3>
-
-        <input
-          type="range"
-          min={0}
-          max={100}
-          value={opacity}
-          onChange={(e) => setOpacity(Number(e.target.value))}
-          className="w-full"
-        />
-
-        <div className="flex justify-between text-xs text-gray-400 mt-1">
-          <span>0</span>
-          <span>100</span>
+        <div className="flex justify-between items-center mb-1">
+          <SectionTitle>Opacity</SectionTitle>
+          <span className="text-[10px] font-medium text-white/40">{opacity}%</span>
         </div>
+        <input
+          type="range" min={0} max={100} value={opacity}
+          onChange={(e) => setOpacity(Number(e.target.value))}
+          className="w-full accent-purple-500 h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer"
+        />
       </div>
-    </div>
+    </SidebarContainer>
   );
 }
 
 export function PencilSettingsSidebar() {
   const {
-    strokeColor,
-    setStrokeColorByIndex,
-    setCustomStrokeColor,
-
-    fillStyle,
-    setFillStyle,
-    strokeWidth,
-    setStrokeWidth,
-    opacity,
-    setOpacity,
+    strokeColor, setStrokeColorByIndex, setCustomStrokeColor,
+    strokeWidth, setStrokeWidth,
+    opacity, setOpacity,
   } = useDrawingSettings();
 
   return (
-    <div className="w-52 bg-[#2D2D2D] text-white p-3 font-sans text-sm rounded-lg">
-      {/* Stroke Color */}
-      <div className="mb-4">
-        <h3 className="text-sm font-medium mb-2">Stroke</h3>
-        <div className="flex gap-1 flex-wrap">
+    <SidebarContainer>
+      <div>
+        <SectionTitle>Line Color</SectionTitle>
+        <div className="flex flex-wrap gap-2">
           {strokeColors.map((color, index) => (
-            <button
-              key={index}
-              onClick={() => setStrokeColorByIndex(index)}
-              className={`w-8 h-8 rounded-md border ${
-                strokeColor === color ? "border-white" : "border-gray-600"
-              }`}
-              style={{ backgroundColor: color }}
-            />
+            <ColorButton key={index} color={color} isActive={strokeColor === color} onClick={() => setStrokeColorByIndex(index)} />
           ))}
-          {/* Custom stroke color input */}
-          <div className="relative">
-            <button
-              className={`w-8 h-8 rounded-md border ${
-                !strokeColors.includes(strokeColor)
-                  ? "border-white"
-                  : "border-gray-600"
-              }`}
-              style={{ backgroundColor: strokeColor }}
-            />
-            <input
-              type="color"
-              value={strokeColor}
-              onChange={(e) => setCustomStrokeColor(e.target.value)}
-              className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-              aria-label="Custom stroke color"
-            />
-          </div>
+          <CustomColorInput value={strokeColor} onChange={setCustomStrokeColor} isActive={!strokeColors.includes(strokeColor)} />
         </div>
       </div>
 
-      {/* Fill Style Change this later */}
-      {/* <div className="mb-4">
-        <h3 className="text-sm font-medium mb-2">Fill Style</h3>
-        <div className="flex gap-1">
-          <button
-            onClick={() => setFillStyle(0)}
-            className={`w-8 h-8 rounded-md border ${
-              fillStyle === "no fill"
-                ? "border-white bg-indigo-600"
-                : "border-gray-600 bg-gray-700"
-            } flex items-center justify-center`}
-          >
-            <div
-              className={`w-5 h-5 bg-gradient-to-br from-transparent via-white to-transparent transform rotate-45 ${
-                fillStyle === "no fill" ? "opacity-80" : "opacity-20"
-              }`}
-            ></div>
-          </button>
-          <button
-            onClick={() => setFillStyle(1)}
-            className={`w-8 h-8 rounded-md border ${
-              fillStyle === "fill"
-                ? "border-white bg-indigo-600"
-                : "border-gray-600 bg-gray-700"
-            } flex items-center justify-center`}
-          >
-            <div className="w-4 h-4 bg-white rounded"></div>
-          </button>
-        </div>
-      </div> */}
-
-      {/* Stroke Width */}
-      <div className="mb-4">
-        <h3 className="text-sm font-medium mb-2">Stroke Width</h3>
-        <div className="flex gap-1">
-          {[1, 2, 4].map((width, index) => (
+      <div>
+        <SectionTitle>Thickness</SectionTitle>
+        <div className="flex gap-2">
+          {[1, 2, 4].map((width) => (
             <button
-              key={index}
-              onClick={() => setStrokeWidth(index)}
-              className={`w-8 h-8 rounded-md bg-gray-700 border ${
-                strokeWidth === width
-                  ? "border-white bg-indigo-600"
-                  : "border-gray-600"
-              } flex items-center justify-center`}
+              key={width}
+              onClick={() => setStrokeWidth([1, 2, 4].indexOf(width))}
+              className={cn(
+                "flex h-9 flex-1 items-center justify-center rounded-xl border transition-all",
+                strokeWidth === width ? "border-purple-500 bg-purple-600/20 text-purple-400" : "border-white/10 bg-white/5 text-white/40 hover:bg-white/10"
+              )}
             >
-              <div
-                className="bg-white rounded-full"
-                style={{
-                  width: "16px",
-                  height: `${width}px`,
-                }}
-              ></div>
+              <div className="bg-current rounded-full" style={{ width: "16px", height: `${width}px` }} />
             </button>
           ))}
         </div>
       </div>
 
-      {/* Opacity */}
       <div>
-        <h3 className="text-sm font-medium mb-2">
-          Opacity
-          <span className="w-8 text-right text-xs ml-2 translate-y-[12px] text-gray-300">
-            {opacity}
-          </span>
-        </h3>
-
-        <div className="flex items-center gap-2">
-          <input
-            type="range"
-            min={0}
-            max={100}
-            value={opacity}
-            onChange={(e) => setOpacity(Number(e.target.value))}
-            className="w-full"
-          />
+        <div className="flex justify-between items-center mb-1">
+          <SectionTitle>Opacity</SectionTitle>
+          <span className="text-[10px] font-medium text-white/40">{opacity}%</span>
         </div>
-        <div className="flex justify-between text-xs  mt-1">
-          <span>0</span>
-          <span>100</span>
-        </div>
+        <input
+          type="range" min={0} max={100} value={opacity}
+          onChange={(e) => setOpacity(Number(e.target.value))}
+          className="w-full accent-purple-500 h-1.5 bg-white/10 rounded-lg appearance-none cursor-pointer"
+        />
       </div>
-    </div>
+    </SidebarContainer>
   );
 }

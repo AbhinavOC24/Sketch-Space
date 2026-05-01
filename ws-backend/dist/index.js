@@ -12,12 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 const ws_1 = require("ws");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const index_1 = __importDefault(require("./db/index"));
 const wss = new ws_1.WebSocketServer({ port: 8080 });
-const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config();
 const users = [];
 function checkUser(token) {
     try {
