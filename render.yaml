@@ -1,0 +1,40 @@
+services:
+  # HTTP REST API
+  - type: web
+    name: sketchspace-http
+    env: node
+    region: oregon
+    plan: free
+    rootDir: http-backend
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npx prisma db push && npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 8001
+      - key: DATABASE_URL
+        sync: false   # set this manually in Render dashboard
+      - key: JWTSECRET
+        sync: false   # set this manually in Render dashboard
+      - key: FRONTEND_URL
+        sync: false   # e.g. https://your-app.vercel.app
+
+  # WebSocket Server
+  - type: web
+    name: sketchspace-ws
+    env: node
+    region: oregon
+    plan: free
+    rootDir: ws-backend
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 8002
+      - key: DATABASE_URL
+        sync: false   # set this manually in Render dashboard
+      - key: JWTSECRET
+        sync: false   # set this manually in Render dashboard
